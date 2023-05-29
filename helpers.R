@@ -25,7 +25,7 @@ collectJobDescriptionItems = function() {
   
 }
 
-scrapePostingsForKeyword = function(keyword, username, password, 
+scrapePostingsForKeyword = function(keyword, username, password, start,
                                     maxpages = NULL, verbose = T) {
   
   ##############################################################################
@@ -93,7 +93,7 @@ scrapePostingsForKeyword = function(keyword, username, password,
   
   # For each page, go through each of the job postings and collect information
   # on responsibilities and skills
-  for (i in 1:npages) {
+  for (i in start:npages) {
     
     if (verbose) {
       print(paste0("Scraping page ", i, ": ", lubridate::now()))
@@ -111,8 +111,6 @@ scrapePostingsForKeyword = function(keyword, username, password,
       position_in_pagination = which(currently_shown_page_numbers == as.character(i))
       current_pages[[position_in_pagination]]$clickElement()
     }
-    
-    current_pages[[position_in_pagination]]$clickElement()
     
     # Waiting for number of job posting pages to appear
     Sys.sleep(2)
@@ -178,17 +176,9 @@ scrapePostingsForKeyword = function(keyword, username, password,
 
     } # end of loop over postings
     
-    if (verbose) {
-      print(paste0("Done scraping page ", i, ": ", lubridate::now()))
-    }
-    
-    # Combine all of the page data into a single tibble and then add to data_list
-    data_list[[i]] = bind_rows(page_list)
+    # Saving into data folder early as a check
+    saveRDS(bind_rows(page_list), paste0("./data/2023-05-29-biostatistician-scrape-page-", i ,".rds"))
     
   } # end of loop over pages
-  
-  # Finally, combine all of the individual page tibbles into one large dataset
-  data = bind_rows(data_list)
-  saveRDS(data, "2023-05-29-biostatistician-scrape.rds")
   
 }
