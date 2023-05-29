@@ -16,6 +16,8 @@ rD = rsDriver(browser = "firefox")
 remDr = rD$client
 ```
 
+Make sure that you update the information according to your personal profile!
+
 ```{r}
 # Scraping function needs
 # 1. keyword: keyword to search for in job title
