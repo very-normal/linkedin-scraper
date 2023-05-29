@@ -103,7 +103,15 @@ scrapePostingsForKeyword = function(keyword, username, password,
     currently_shown_page_numbers = current_pages %>% 
       map(function(li) { li$getElementText() }) %>% 
       unlist()
-    position_in_pagination = which(currently_shown_page_numbers == as.character(i))
+    
+    # Covering a weird edge case where the list doesn't show 9 at the 8th page
+    if (i == 9) {
+      current_pages[[i]]$clickElement()
+    } else {
+      position_in_pagination = which(currently_shown_page_numbers == as.character(i))
+      current_pages[[position_in_pagination]]$clickElement()
+    }
+    
     current_pages[[position_in_pagination]]$clickElement()
     
     # Waiting for number of job posting pages to appear
@@ -122,8 +130,6 @@ scrapePostingsForKeyword = function(keyword, username, password,
       
       # Waiting for the page to load long enough so entire job description will appear
       Sys.sleep(5)
-      
-      
       
       # Get various job and company information & format as strings
       job_title = remDr$findElement(using = "css", "h2.jobs-unified-top-card__job-title")$getElementText() %>% unlist
@@ -176,14 +182,13 @@ scrapePostingsForKeyword = function(keyword, username, password,
       print(paste0("Done scraping page ", i, ": ", lubridate::now()))
     }
     
-    
-    
     # Combine all of the page data into a single tibble and then add to data_list
     data_list[[i]] = bind_rows(page_list)
     
   } # end of loop over pages
   
   # Finally, combine all of the individual page tibbles into one large dataset
-  bind_rows(data_list)
+  data = bind_rows(data_list)
+  saveRDS(data, "2023-05-29-biostatistician-scrape.rds")
   
 }

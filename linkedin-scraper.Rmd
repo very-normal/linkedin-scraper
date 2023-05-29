@@ -27,8 +27,8 @@ Make sure that you update the information according to your personal profile!
 # 5. verbose (optional): should progress be printed?
 data = scrapePostingsForKeyword(
   keyword = "biostatistician",
-  username = "USERNAME",
-  password = "PASSWORD"
+  username = "chris.b.pascual@gmail.com",
+  password = "ghjkl012993"
 )
 ```
 
